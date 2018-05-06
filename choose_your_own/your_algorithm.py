@@ -24,21 +24,25 @@ plt.scatter(grade_slow, bumpy_slow, color = "r", label="slow")
 plt.legend()
 plt.xlabel("bumpiness")
 plt.ylabel("grade")
-plt.show()
+# plt.show()
 ################################################################################
 
 
-### your code here!  name your classifier object clf if you want the 
+### your code here!  name your classifier object clf if you want the
 ### visualization code (prettyPicture) to show you the decision boundary
 
+### k neighbors
+
+from sklearn import neighbors
+from sklearn import ensemble
+
+clf = ensemble.AdaBoostClassifier(n_estimators = 10000,learning_rate=0.5)
+clf.fit(features_train,labels_train)
+print clf.score(features_test,labels_test)
 
 
 
-
-
-
-
-try:
-    prettyPicture(clf, features_test, labels_test)
-except NameError:
-    pass
+# try:
+#     prettyPicture(clf, features_test, labels_test)
+# except NameError:
+#     pass
