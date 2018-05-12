@@ -1,6 +1,6 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 
-""" 
+"""
     Skeleton code for k-means clustering mini-project.
 """
 
@@ -40,14 +40,23 @@ def Draw(pred, features, poi, mark_poi=False, name="image.png", f1_name="feature
 
 ### load in the dict of dicts containing all the data on each person in the dataset
 data_dict = pickle.load( open("../final_project/final_project_dataset.pkl", "r") )
-### there's an outlier--remove it! 
+### there's an outlier--remove it!
 data_dict.pop("TOTAL", 0)
 
+options = []
+for key in data_dict.keys():
+    if data_dict[key]["salary"]!="NaN":
+        options.append(data_dict[key]["salary"])
+options.sort()
+print options[0]
+print options[-1]
 
-### the input features we want to use 
-### can be any key in the person-level dictionary (salary, director_fees, etc.) 
+
+### the input features we want to use
+### can be any key in the person-level dictionary (salary, director_fees, etc.)
 feature_1 = "salary"
 feature_2 = "exercised_stock_options"
+feature_3 = "total_payments"
 poi  = "poi"
 features_list = [poi, feature_1, feature_2]
 data = featureFormat(data_dict, features_list )
@@ -55,7 +64,7 @@ poi, finance_features = targetFeatureSplit( data )
 
 
 ### in the "clustering with 3 features" part of the mini-project,
-### you'll want to change this line to 
+### you'll want to change this line to
 ### for f1, f2, _ in finance_features:
 ### (as it's currently written, the line below assumes 2 features)
 for f1, f2 in finance_features:
@@ -64,9 +73,33 @@ plt.show()
 
 ### cluster here; create predictions of the cluster labels
 ### for the data and store them to a list called pred
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+rescaled = scaler.fit_transform(finance_features)
+maxS = 0
+minS = 0
+maxE = 0
+minE = 0
+for i in range(0,len(finance_features)):
+    if maxS<finance_features[i][0]:
+        maxS = finance_features[i][0]
+    if minS>finance_features[i][0]:
+        minS = finance_features[i][0]
+    if maxE<finance_features[i][1]:
+        maxE = finance_features[i][1]
+    if minE>finance_features[i][1]:
+        minE = finance_features[i][1]
+    if finance_features[i][0]==200000:
+        print "salary: "+rescaled[i][0]
+    if finance_features[i][1]==1000000:
+        print "stock: "+rescaled[i][1]
+print "SALARY: "+str(float(200000-minS)/(maxS-minS))
+print "EEE: "+str(float(1000000-minE)/(maxE-minE))
 
-
-
+clu = KMeans(n_clusters=2)
+clu.fit(finance_features)
+pred = clu.predict(finance_features)
 
 ### rename the "name" parameter when you change the number of features
 ### so that the figure gets saved to a different file
